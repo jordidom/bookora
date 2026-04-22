@@ -46,4 +46,4 @@ INSERT INTO generos (nombre) VALUES
 ('Misterio');
 
 INSERT INTO admins (username, password)
-VALUES ('admin', 'scrypt:32768:8:1$RFH7AnwlcXuUul3G$87e8ba4b26a12c98def1d04f36785de1fc46a8d752d7160b7eb8235f514d779ef6e9b19427d5eaf9e010f0c473fe3aedacd49f626efc5e8e89b29c16c12358ae');
+VALUES ('admin', 'scrypt:32768:8:1$r3mJoc9RBfjDHH7l$017306231661c727a30b5b3592f7682b7337f7660f1ed2039ce98244c7ebf0f85e4f46f63b9c98c23c6192ef19e57fa7597bc97bd5a13eeb391765965ab4c4b3');

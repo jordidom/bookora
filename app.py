@@ -10,15 +10,14 @@ from werkzeug.utils import secure_filename
 import mysql.connector
 
 app = Flask(__name__)
-app.secret_key = "cambia_esto_por_una_clave_segura"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-# Configuración MySQL
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DATABASE"] = "bookora"
+app.config["MYSQL_HOST"] = os.environ.get("MYSQLHOST", "localhost")
+app.config["MYSQL_USER"] = os.environ.get("MYSQLUSER", "root")
+app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQLPASSWORD", "")
+app.config["MYSQL_DATABASE"] = os.environ.get("MYSQLDATABASE", "bookora")
+app.config["MYSQL_PORT"] = int(os.environ.get("MYSQLPORT", 3306))
 
-# Carpetas de subida
 app.config["UPLOAD_COVERS"] = os.path.join("static", "uploads", "covers")
 app.config["UPLOAD_PDFS"] = os.path.join("static", "uploads", "pdfs")
 app.config["UPLOAD_EPUBS"] = os.path.join("static", "uploads", "epubs")
@@ -41,7 +40,8 @@ def get_db():
         host=app.config["MYSQL_HOST"],
         user=app.config["MYSQL_USER"],
         password=app.config["MYSQL_PASSWORD"],
-        database=app.config["MYSQL_DATABASE"]
+        database=app.config["MYSQL_DATABASE"],
+        port=app.config["MYSQL_PORT"]
     )
 
 
