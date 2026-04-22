@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}Bookora | Biblioteca digital{% endblock %}
+
+{% block content %}
+<section class="hero hero-premium">
+  <div class="hero-grid">
+    <div class="hero-text">
+      <span class="hero-badge">Bookora Premium Library</span>
+      <h1>Descubre, filtra y descarga tus libros favoritos</h1>
+      <p>
+        Explora una biblioteca visual con fichas completas, géneros, idiomas,
+        años de publicación y archivos en PDF o EPUB.
+      </p>
+
+      <div class="hero-mini-stats">
+        <div class="mini-stat">
+          <strong>{{ libros|length }}</strong>
+          <span>libros visibles</span>
+        </div>
+        <div class="mini-stat">
+          <strong>{{ destacados|length }}</strong>
+          <span>destacados</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-side-card">
+      <h3>Explora más rápido</h3>
+      <p>Busca por autor, título, género, idioma o año y encuentra lo que necesitas al momento.</p>
+    </div>
+  </div>
+</section>
+
+{% if destacados %}
+<section class="section-head">
+  <div>
+    <span class="section-kicker">Selección especial</span>
+    <h2>Libros destacados</h2>
+  </div>
+</section>
+
+<section class="featured-grid">
+  {% for libro in destacados %}
+    <article class="featured-book-card">
+      <a href="{{ url_for('detalle_libro', libro_id=libro.id) }}">
+        {% if libro.portada %}
+          <img src="{{ url_for('static', filename='uploads/covers/' ~ libro.portada) }}" alt="{{ libro.titulo }}" class="featured-cover">
+        {% else %}
+          <div class="featured-cover placeholder-cover">Sin portada</div>
+        {% endif %}
+      </a>
+
+      <div class="featured-overlay">
+        <span class="featured-badge">Destacado</span>
+        <h3>{{ libro.titulo }}</h3>
+        <p>{{ libro.autor }}</p>
+      </div>
+    </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="filters-card premium-card">
+  <div class="section-head compact-head">
+    <div>
+      <span class="section-kicker">Catálogo</span>
+      <h2>Filtra tus libros</h2>
+    </div>
+  </div>
+
+  <form method="GET" action="{{ url_for('index') }}" class="filters-form">
+    <div class="filter-group">
+      <label for="q">Buscar</label>
+      <input type="text" id="q" name="q" placeholder="Título o autor" value="{{ filtros.q }}">
+    </div>
+
+    <div class="filter-group">
+      <label for="genero">Género</label>
+      <select id="genero" name="genero">
+        <option value="">Todos</option>
+        {% for genero in generos %}
+          <option value="{{ genero.id }}" {% if filtros.genero == genero.id|string %}selected{% endif %}>
+            {{ genero.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="idioma">Idioma</label>
+      <select id="idioma" name="idioma">
+        <option value="">Todos</option>
+        {% for item in idiomas %}
+          <option value="{{ item.idioma }}" {% if filtros.idioma == item.idioma %}selected{% endif %}>
+            {{ item.idioma }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="anio">Año</label>
+      <select id="anio" name="anio">
+        <option value="">Todos</option>
+        {% for item in anios %}
+          <option value="{{ item.anio_publicacion }}" {% if filtros.anio == item.anio_publicacion|string %}selected{% endif %}>
+            {{ item.anio_publicacion }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<section class="section-head">
+  <div>
+    <span class="section-kicker">Biblioteca</span>
+    <h2>Todos los libros</h2>
+  </div>
+</section>
+
+<section class="books-grid">
+  {% if libros %}
+    {% for libro in libros %}
+      <article class="book-card premium-book-card">
+        <a href="{{ url_for('detalle_libro', libro_id=libro.id) }}" class="book-cover-link">
+          {% if libro.portada %}
+            <img src="{{ url_for('static', filename='uploads/covers/' ~ libro.portada) }}" alt="{{ libro.titulo }}" class="book-cover">
+          {% else %}
+            <div class="book-cover placeholder-cover">Sin portada</div>
+          {% endif %}
+        </a>
+
+        <div class="book-body">
+          <div class="book-topline">
+            <span class="book-genre">{{ libro.genero_nombre or 'Sin género' }}</span>
+            {% if libro.is_featured %}
+              <span class="tiny-badge">Destacado</span>
+            {% endif %}
+          </div>
+
+          <h3>{{ libro.titulo }}</h3>
+          <p class="book-author">{{ libro.autor }}</p>
+
+          <div class="book-meta">
+            <span>{{ libro.anio_publicacion or 'N/D' }}</span>
+            <span>{{ libro.idioma or 'N/D' }}</span>
+          </div>
+
+          <div class="downloads-chip">
+            Descargas: {{ libro.downloads_count or 0 }}
+          </div>
+
+          <div class="book-actions">
+            <a href="{{ url_for('detalle_libro', libro_id=libro.id) }}" class="btn btn-primary btn-small">Ver ficha</a>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <h3>No se encontraron libros</h3>
+      <p>Prueba con otros filtros o añade libros desde el panel admin.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

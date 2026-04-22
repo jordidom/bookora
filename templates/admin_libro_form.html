@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}{% if libro %}Editar libro{% else %}Nuevo libro{% endif %} | Bookora{% endblock %}
+
+{% block content %}
+<section class="form-card premium-card">
+  <div class="section-head compact-head">
+    <div>
+      <span class="section-kicker">Edición</span>
+      <h1>{% if libro %}Editar libro{% else %}Añadir nuevo libro{% endif %}</h1>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="book-form-layout">
+      <div class="cover-preview-panel">
+        <label class="preview-label">Vista previa de portada</label>
+
+        <div class="cover-preview-box">
+          {% if libro and libro.portada %}
+            <img
+              id="coverPreview"
+              src="{{ url_for('static', filename='uploads/covers/' ~ libro.portada) }}"
+              alt="Vista previa portada"
+              class="cover-preview-image"
+            >
+          {% else %}
+            <img
+              id="coverPreview"
+              src=""
+              alt="Vista previa portada"
+              class="cover-preview-image hidden"
+            >
+            <div id="coverPlaceholder" class="cover-preview-placeholder">
+              Sin portada seleccionada
+            </div>
+          {% endif %}
+
+          {% if libro and libro.portada %}
+            <div id="coverPlaceholder" class="cover-preview-placeholder hidden">
+              Sin portada seleccionada
+            </div>
+          {% endif %}
+        </div>
+
+        <p class="preview-help">Al seleccionar una nueva imagen, se mostrará aquí antes de guardar.</p>
+      </div>
+
+      <div class="book-form-fields">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" value="{{ libro.titulo if libro else '' }}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="autor">Autor</label>
+            <input type="text" id="autor" name="autor" value="{{ libro.autor if libro else '' }}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="genero_id">Género</label>
+            <select id="genero_id" name="genero_id">
+              <option value="">Seleccionar género</option>
+              {% for genero in generos %}
+                <option value="{{ genero.id }}" {% if libro and libro.genero_id == genero.id %}selected{% endif %}>
+                  {{ genero.nombre }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="anio_publicacion">Año de publicación</label>
+            <input type="number" id="anio_publicacion" name="anio_publicacion" value="{{ libro.anio_publicacion if libro else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="idioma">Idioma</label>
+            <input type="text" id="idioma" name="idioma" value="{{ libro.idioma if libro else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="editorial">Editorial</label>
+            <input type="text" id="editorial" name="editorial" value="{{ libro.editorial if libro else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="paginas">Páginas</label>
+            <input type="number" id="paginas" name="paginas" value="{{ libro.paginas if libro else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="portada">Portada</label>
+            <input type="file" id="portada" name="portada" accept=".png,.jpg,.jpeg,.webp">
+          </div>
+
+          <div class="form-group">
+            <label for="archivo_pdf">Archivo PDF</label>
+            <input type="file" id="archivo_pdf" name="archivo_pdf" accept=".pdf">
+          </div>
+
+          <div class="form-group">
+            <label for="archivo_epub">Archivo EPUB</label>
+            <input type="file" id="archivo_epub" name="archivo_epub" accept=".epub">
+          </div>
+        </div>
+
+        <div class="checkbox-card">
+          <label class="checkbox-line">
+            <input
+              type="checkbox"
+              name="is_featured"
+              value="1"
+              {% if libro and libro.is_featured == 1 %}checked{% endif %}
+            >
+            <span>Marcar como libro destacado</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="sinopsis">Sinopsis</label>
+          <textarea id="sinopsis" name="sinopsis" rows="8">{{ libro.sinopsis if libro else '' }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        {% if libro %}Guardar cambios{% else %}Crear libro{% endif %}
+      </button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

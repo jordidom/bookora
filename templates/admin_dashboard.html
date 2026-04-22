@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Panel admin | Bookora{% endblock %}
+
+{% block content %}
+<section class="admin-top">
+  <div>
+    <span class="section-kicker">Gestión</span>
+    <h1>Panel de administración</h1>
+    <p>Controla libros, destacados, géneros y estadísticas de Bookora.</p>
+  </div>
+  <a href="{{ url_for('admin_nuevo_libro') }}" class="btn btn-primary">+ Añadir libro</a>
+</section>
+
+<section class="stats-grid premium-stats-grid">
+  <div class="stat-card stat-premium">
+    <span>Total libros</span>
+    <strong>{{ total_libros }}</strong>
+  </div>
+
+  <div class="stat-card stat-premium">
+    <span>Total géneros</span>
+    <strong>{{ total_generos }}</strong>
+  </div>
+
+  <div class="stat-card stat-premium">
+    <span>Libros destacados</span>
+    <strong>{{ total_destacados }}</strong>
+  </div>
+
+  <div class="stat-card stat-premium">
+    <span>Descargas totales</span>
+    <strong>{{ total_descargas }}</strong>
+  </div>
+</section>
+
+<section class="dashboard-panels">
+  <div class="table-card premium-card">
+    <div class="section-head compact-head">
+      <div>
+        <span class="section-kicker">Ranking</span>
+        <h2>Top descargados</h2>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Descargas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if top_descargados %}
+            {% for item in top_descargados %}
+              <tr>
+                <td>{{ item.titulo }}</td>
+                <td>{{ item.autor }}</td>
+                <td>{{ item.downloads_count }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="3">No hay datos todavía.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-card premium-card">
+    <div class="section-head compact-head">
+      <div>
+        <span class="section-kicker">Distribución</span>
+        <h2>Libros por género</h2>
+      </div>
+    </div>
+
+    <div class="genre-stats-list">
+      {% if libros_por_genero %}
+        {% for item in libros_por_genero %}
+          <div class="genre-stat-row">
+            <div class="genre-stat-top">
+              <span>{{ item.genero }}</span>
+              <strong>{{ item.total }}</strong>
+            </div>
+            <div class="genre-bar">
+              <div
+                class="genre-bar-fill"
+                style="width: {{ (item.total * 100 / total_libros) if total_libros > 0 else 0 }}%;">
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No hay géneros todavía.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="table-card premium-card">
+  <div class="section-head compact-head">
+    <div>
+      <span class="section-kicker">Catálogo</span>
+      <h2>Todos los libros</h2>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Portada</th>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Género</th>
+          <th>Año</th>
+          <th>Descargas</th>
+          <th>Destacado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if libros %}
+          {% for libro in libros %}
+            <tr>
+              <td>{{ libro.id }}</td>
+              <td>
+                {% if libro.portada %}
+                  <img src="{{ url_for('static', filename='uploads/covers/' ~ libro.portada) }}" alt="{{ libro.titulo }}" class="admin-cover-thumb">
+                {% else %}
+                  <span>—</span>
+                {% endif %}
+              </td>
+              <td>{{ libro.titulo }}</td>
+              <td>{{ libro.autor }}</td>
+              <td>{{ libro.genero_nombre or 'Sin género' }}</td>
+              <td>{{ libro.anio_publicacion or 'N/D' }}</td>
+              <td>{{ libro.downloads_count or 0 }}</td>
+              <td>
+                {% if libro.is_featured %}
+                  <span class="tiny-badge">Sí</span>
+                {% else %}
+                  <span class="tiny-badge neutral-badge">No</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="table-actions">
+                  <a href="{{ url_for('detalle_libro', libro_id=libro.id) }}" class="btn btn-secondary btn-small">Ver</a>
+                  <a href="{{ url_for('admin_editar_libro', libro_id=libro.id) }}" class="btn btn-primary btn-small">Editar</a>
+                  <form method="POST" action="{{ url_for('admin_borrar_libro', libro_id=libro.id) }}" onsubmit="return confirm('¿Seguro que quieres borrar este libro?');">
+                    <button type="submit" class="btn btn-danger btn-small">Borrar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="9">No hay libros todavía.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

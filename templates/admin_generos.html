@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Géneros | Bookora{% endblock %}
+
+{% block content %}
+<section class="genre-layout">
+  <div class="form-card small-card">
+    <h1>Añadir género</h1>
+    <form method="POST" class="admin-form">
+      <div class="form-group">
+        <label for="nombre">Nombre del género</label>
+        <input type="text" id="nombre" name="nombre" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Guardar género</button>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <h2>Listado de géneros</h2>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for genero in generos %}
+            <tr>
+              <td>{{ genero.id }}</td>
+              <td>{{ genero.nombre }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_borrar_genero', genero_id=genero.id) }}" onsubmit="return confirm('¿Seguro que quieres borrar este género?');">
+                  <button type="submit" class="btn btn-danger btn-small">Borrar</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

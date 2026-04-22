@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ libro.titulo }} | Bookora{% endblock %}
+
+{% block content %}
+<section class="detail-layout">
+  <div class="detail-cover-box premium-card">
+    {% if libro.portada %}
+      <img src="{{ url_for('static', filename='uploads/covers/' ~ libro.portada) }}" alt="{{ libro.titulo }}" class="detail-cover">
+    {% else %}
+      <div class="detail-cover placeholder-cover">Sin portada</div>
+    {% endif %}
+  </div>
+
+  <div class="detail-info premium-card">
+    <div class="detail-top-row">
+      <span class="detail-badge">{{ libro.genero_nombre or 'Sin género' }}</span>
+      {% if libro.is_featured %}
+        <span class="tiny-badge">Libro destacado</span>
+      {% endif %}
+    </div>
+
+    <h1>{{ libro.titulo }}</h1>
+    <h2>{{ libro.autor }}</h2>
+
+    <div class="detail-meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Año</span>
+        <span class="meta-value">{{ libro.anio_publicacion or 'N/D' }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Idioma</span>
+        <span class="meta-value">{{ libro.idioma or 'N/D' }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Editorial</span>
+        <span class="meta-value">{{ libro.editorial or 'N/D' }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Páginas</span>
+        <span class="meta-value">{{ libro.paginas or 'N/D' }}</span>
+      </div>
+    </div>
+
+    <div class="downloads-panel">
+      <strong>{{ libro.downloads_count or 0 }}</strong>
+      <span>descargas totales</span>
+    </div>
+
+    <div class="detail-synopsis">
+      <h3>Sinopsis</h3>
+      <p>{{ libro.sinopsis or 'Este libro no tiene sinopsis todavía.' }}</p>
+    </div>
+
+    <div class="download-actions">
+      {% if libro.archivo_pdf %}
+        <a href="{{ url_for('descargar_pdf', libro_id=libro.id) }}" class="btn btn-primary">Descargar PDF</a>
+      {% endif %}
+
+      {% if libro.archivo_epub %}
+        <a href="{{ url_for('descargar_epub', libro_id=libro.id) }}" class="btn btn-secondary">Descargar EPUB</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if relacionados %}
+<section class="section-head related-head">
+  <div>
+    <span class="section-kicker">Sugerencias</span>
+    <h2>Otros libros</h2>
+  </div>
+</section>
+
+<section class="books-grid small-books-grid">
+  {% for item in relacionados %}
+    <article class="book-card premium-book-card">
+      <a href="{{ url_for('detalle_libro', libro_id=item.id) }}" class="book-cover-link">
+        {% if item.portada %}
+          <img src="{{ url_for('static', filename='uploads/covers/' ~ item.portada) }}" alt="{{ item.titulo }}" class="book-cover">
+        {% else %}
+          <div class="book-cover placeholder-cover">Sin portada</div>
+        {% endif %}
+      </a>
+
+      <div class="book-body">
+        <h3>{{ item.titulo }}</h3>
+        <p class="book-author">{{ item.autor }}</p>
+        <div class="book-actions">
+          <a href="{{ url_for('detalle_libro', libro_id=item.id) }}" class="btn btn-secondary btn-small">Ver libro</a>
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
